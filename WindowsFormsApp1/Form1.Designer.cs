@@ -30,6 +30,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.textBoxFIO = new System.Windows.Forms.TextBox();
             this.maskedTextBoxDateCheck = new System.Windows.Forms.MaskedTextBox();
@@ -463,6 +464,7 @@
             this.ClientSize = new System.Drawing.Size(604, 751);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.groupBoxForm);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(15, 15);
             this.MaximumSize = new System.Drawing.Size(620, 790);
             this.MinimumSize = new System.Drawing.Size(620, 790);

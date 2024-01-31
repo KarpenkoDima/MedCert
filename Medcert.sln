@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{B4B7A016-820A-45EC-883B-5FC8D1336476}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedCert", "WindowsFormsApp1\MedCert.csproj", "{B4B7A016-820A-45EC-883B-5FC8D1336476}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +15,8 @@ Global
 		{B4B7A016-820A-45EC-883B-5FC8D1336476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4B7A016-820A-45EC-883B-5FC8D1336476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4B7A016-820A-45EC-883B-5FC8D1336476}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
