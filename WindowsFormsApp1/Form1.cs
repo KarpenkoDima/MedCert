@@ -129,6 +129,7 @@ namespace WindowsFormsApp1
         }
         private void SaveCustomer()
         {
+            ClearDataBindings();
             if (textBoxFIO.DataBindings.Count <= 0)
             {
                 try
