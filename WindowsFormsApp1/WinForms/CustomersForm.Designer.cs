@@ -47,7 +47,7 @@
             this.dataGridViewCustomers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewCustomers.Location = new System.Drawing.Point(7, 32);
             this.dataGridViewCustomers.Name = "dataGridViewCustomers";
-            this.dataGridViewCustomers.Size = new System.Drawing.Size(787, 347);
+            this.dataGridViewCustomers.Size = new System.Drawing.Size(971, 458);
             this.dataGridViewCustomers.TabIndex = 0;
             this.dataGridViewCustomers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewCustomers_CellClick);
             // 
@@ -62,7 +62,7 @@
             this.groupBoxCustomers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxCustomers.Location = new System.Drawing.Point(0, 0);
             this.groupBoxCustomers.Name = "groupBoxCustomers";
-            this.groupBoxCustomers.Size = new System.Drawing.Size(800, 450);
+            this.groupBoxCustomers.Size = new System.Drawing.Size(984, 561);
             this.groupBoxCustomers.TabIndex = 1;
             this.groupBoxCustomers.TabStop = false;
             this.groupBoxCustomers.Text = "Список кому выдан сертификат";
@@ -70,7 +70,7 @@
             // buttonGetAllCustomers
             // 
             this.buttonGetAllCustomers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonGetAllCustomers.Location = new System.Drawing.Point(7, 383);
+            this.buttonGetAllCustomers.Location = new System.Drawing.Point(7, 494);
             this.buttonGetAllCustomers.Name = "buttonGetAllCustomers";
             this.buttonGetAllCustomers.Size = new System.Drawing.Size(75, 59);
             this.buttonGetAllCustomers.TabIndex = 5;
@@ -81,7 +81,7 @@
             // buttonExit
             // 
             this.buttonExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExit.Location = new System.Drawing.Point(713, 383);
+            this.buttonExit.Location = new System.Drawing.Point(897, 494);
             this.buttonExit.Name = "buttonExit";
             this.buttonExit.Size = new System.Drawing.Size(75, 59);
             this.buttonExit.TabIndex = 4;
@@ -92,7 +92,7 @@
             // buttonSearch
             // 
             this.buttonSearch.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.buttonSearch.Location = new System.Drawing.Point(492, 403);
+            this.buttonSearch.Location = new System.Drawing.Point(584, 514);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonSearch.TabIndex = 3;
@@ -104,7 +104,7 @@
             // 
             this.labelSearch.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.labelSearch.AutoSize = true;
-            this.labelSearch.Location = new System.Drawing.Point(146, 408);
+            this.labelSearch.Location = new System.Drawing.Point(238, 519);
             this.labelSearch.Name = "labelSearch";
             this.labelSearch.Size = new System.Drawing.Size(108, 13);
             this.labelSearch.TabIndex = 2;
@@ -113,7 +113,7 @@
             // textBoxSearchFIO
             // 
             this.textBoxSearchFIO.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.textBoxSearchFIO.Location = new System.Drawing.Point(266, 403);
+            this.textBoxSearchFIO.Location = new System.Drawing.Point(358, 514);
             this.textBoxSearchFIO.Name = "textBoxSearchFIO";
             this.textBoxSearchFIO.Size = new System.Drawing.Size(220, 20);
             this.textBoxSearchFIO.TabIndex = 1;
@@ -123,9 +123,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.groupBoxCustomers);
             this.Name = "CustomersForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CustomersForm";
             this.Load += new System.EventHandler(this.CustomersForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCustomers)).EndInit();

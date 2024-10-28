@@ -20,6 +20,6 @@ namespace WindowsFormsApp1.Classes
         public int R1 { get; set; }
         public int R2 { get; set; }
         public String MedDoctors { get; set; }
-        public string Index => string.Join(" ", FIO + Registration + BoD.Year.ToString()+ DateTime.Now);
+        public string Index => string.Join("; ", FIO, Registration, BoD.Year.ToString(), DateTime.Now);
     }
 }
