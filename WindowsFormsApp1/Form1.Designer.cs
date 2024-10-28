@@ -431,8 +431,8 @@
             this.списокToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ListCustomerCert});
             this.списокToolStripMenuItem.Name = "списокToolStripMenuItem";
-            this.списокToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.списокToolStripMenuItem.Text = "Список ";
+            this.списокToolStripMenuItem.Size = new System.Drawing.Size(192, 20);
+            this.списокToolStripMenuItem.Text = "Список выданых сертификатов";
             // 
             // ListCustomerCert
             // 

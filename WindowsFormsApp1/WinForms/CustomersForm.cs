@@ -136,6 +136,7 @@ namespace WindowsFormsApp1.WinForms
                 dataGridViewCustomers.Columns["Index"].HeaderText = "Временной штамп";
                 dataGridViewCustomers.Columns["Id"].Visible = false;
                 dataGridViewCustomers.Columns["FIO"].HeaderText = "ПІБ";
+                dataGridViewCustomers.Columns["FIO"].MinimumWidth = 100;
                 dataGridViewCustomers.Columns["R1"].HeaderText = "к 7п. Наявні/Відсутні";
                 dataGridViewCustomers.Columns["R2"].HeaderText = "к 8п. Наявні/Відсутні";
                 dataGridViewCustomers.Columns["Sex"].HeaderText = "Пол";
@@ -161,7 +162,7 @@ namespace WindowsFormsApp1.WinForms
                 dataGridViewCustomers.Columns.Insert(dataGridViewCustomers.Columns.Count, detailsCol);
                 DataGridViewButtonColumn detailsCol2 = new DataGridViewButtonColumn();
                 detailsCol2.Name = "Print";
-                detailsCol2.Text = "Распечатать сертификат повторно";
+                detailsCol2.Text = "Распечатать повторно";
                 detailsCol2.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 detailsCol2.UseColumnTextForButtonValue = true;
                 detailsCol2.HeaderText = "";
