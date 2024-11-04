@@ -1,24 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using EasyDox;
 using LiteDB;
-using System.Configuration;
-using WindowsFormsApp1.Classes;
 using WindowsFormsApp1.WinForms;
-using System.Configuration;
-using static System.Windows.Forms.AxHost;
 using System.Linq;
+using WindowsFormsApp1.Services;
+using WindowsFormsApp1.Models;
+using WindowsFormsApp1.Data.Repositories;
 
 namespace WindowsFormsApp1
 {
-    public partial class Form1 : Form
+    public partial class Medcert : Form
     {
         BindingSource binding = new BindingSource();
-        public Form1()
+
+
+        private readonly IFormFactory _formFactory;
+
+       private readonly IPrintService _printService;
+        private readonly ILogService _logService;
+        ICustomerRepository _customerRepository;
+        IDoctorRepository _doctorRepository;
+        public Medcert(IPrintService printService,
+        ILogService logService,
+        ICustomerRepository customerRepository,
+        IDoctorRepository doctorRepository,
+        IFormFactory formFactory)
         {
+            _printService = printService;
+            _logService = logService;
+            _customerRepository = customerRepository;
+            _doctorRepository = doctorRepository;
+            _formFactory = formFactory;
+
             InitializeComponent();
 
             int maxWidth = 0, temp = 0;
@@ -38,77 +52,38 @@ namespace WindowsFormsApp1
             CheckForEerror();
             if (false == GetErrorProvider())
             {
-                PrintCert();
+                PrintCertificate();
                 #region /* ------------ Сохранение клиента в БД ---------- */
                 SaveCustomer();
                 #endregion /* ------------------------------------ */
             }           
         }
-        private void PrintCert()
+        private void PrintCertificate()
         {
-            string medicalDoctors = GetMedDoctorsInString();
-
-            /*******************************************/
-            string BoD = maskedTextBoxBoD.Text.Length == 10 ? maskedTextBoxBoD.Text : new string(' ', 10);
-            string dateCheck = maskedTextBoxDateCheck.Text.Length == 10 ? maskedTextBoxDateCheck.Text : new string(' ', 10);
-            string timeCheck = maskedTextBoxTimeCheck.Text.Length == 5 ? maskedTextBoxTimeCheck.Text : new string(' ', 5);
-            /*******************************************/
-
-            var fieldValues = new Dictionary<string, string>
+            var data = new PrintCertificateData(
+                maskedTextBoxDateCheck.Text,
+                maskedTextBoxTimeCheck.Text,
+                textBoxFIO.Text,
+                maskedTextBoxBoD.Text,
+                comboBoxSex.SelectedItem?.ToString() ?? "",
+                textBoxAddress.Text,
+                textBoxResultMedCheck.Text,
+                comboBoxResultMedCheck.SelectedItem?.ToString() ?? "",
+                textBoxMedExam.Text,
+                comboBoxMedExam.SelectedItem?.ToString() ?? "",
+                GetMedDoctorsInString()
+            );
+          
+            if (!_printService.PrintCertificate(data, out string error))
             {
-                        {"D1", dateCheck[0].ToString()},
-                        {"D2", dateCheck[1].ToString()},
-                        {"M1", dateCheck[3].ToString()},
-                        {"M2", dateCheck[4].ToString()},
-                        {"Y1", dateCheck[6].ToString()},
-                        {"Y2", dateCheck[7].ToString()},
-                        {"Y3", dateCheck[8].ToString()},
-                        {"Y4", dateCheck[9].ToString()},
-                        {"H1", timeCheck[0].ToString()},
-                        {"H2", timeCheck[1].ToString()},
-                        {"m1", timeCheck[3].ToString()},
-                        {"m2", timeCheck[4].ToString()},
-                        {"FIO", textBoxFIO.Text},
-                        {"D3", BoD[0].ToString()},
-                        {"D4", BoD[1].ToString()},
-                        {"M3", BoD[3].ToString()},
-                        {"M4", BoD[4].ToString()},
-                        {"Y5", BoD[6].ToString()},
-                        {"Y6", BoD[7].ToString()},
-                        {"Y7", BoD[8].ToString()},
-                        {"Y8", BoD[9].ToString()},
-                        {"S", comboBoxSex.SelectedItem != null ? comboBoxSex.SelectedItem.ToString() : ""},
-                        {"STREET", textBoxAddress.Text},
-                        {
-                            "WORK1",
-                            textBoxResultMedCheck.Text
-                        },
-                        {"R1", (comboBoxResultMedCheck.SelectedItem != null) ? comboBoxResultMedCheck.SelectedItem.ToString(): ""},
-                        {
-                            "WORK2",
-                            textBoxMedExam.Text
-                        },
-                        {"R2", (comboBoxMedExam.SelectedItem != null) ?  comboBoxMedExam.SelectedItem.ToString() : ""},
-                        {"FIODOCTOR", medicalDoctors}
-                    };
-            string dir = Application.StartupPath;
-            try
-            {
-                string path = Path.Combine(dir + ConfigurationManager.AppSettings["templateDocx"]);
-                string pathOut = Path.Combine(dir + ConfigurationManager.AppSettings["outputDoc"]);
-                var engine = new Engine();
-                engine.Merge(path, fieldValues, pathOut);
-                System.Diagnostics.Process.Start(pathOut);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при попытке распечатать сертификат. Возможно открыт файл с сертификатом {Environment.NewLine} Лучше перезапустите программу.",
+                MessageBox.Show(error,
                     "Ошибка при печати сертификата",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                LogError(ex.Message);
+                _logService.LogError(error);
             }
         }
+    
         private string GetMedDoctorsInString()
         {
             string medicalDoctors = String.Empty;
@@ -134,73 +109,37 @@ namespace WindowsFormsApp1
             {
                 try
                 {
-                    using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
-                    {
-                        // Get customer collection
-                        var col = db.GetCollection<Customer>("customers");
-                        // Create unique index in Name field                    
-                        // Insert new customer document (Id will be auto-incremented)
-                        var customer = GetCustomer();                        
-                        col.Insert(customer);
+                   
+                    _customerRepository.Add(GetCustomer());
+                    ClearDataBindings();
 
-                        ClearDataBindings();
-                    }
                 }
                 catch (Exception ex)
                 {
-
                     LogError(ex.Message);
                 }
-            }
-            /* else
-             {
-                 try
-                 {
-                     using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
-                     {
-                         // Get customer collection
-                         var col = db.GetCollection<Customer>("customers");
-                         var updateCustomer = (Customer)textBoxFIO.DataBindings[0].DataSource;
-                         col.Update(updateCustomer);
-                         updateCustomer = null;
-                         ClearDataBindings();
-                     }
-                 }
-                 catch (Exception ex)
-                 {
-
-                     LogError(ex.Message);
-                 }
-            }*/
+            }           
         }
         private void LoadMD()
-        {
-            using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
-            {
-                //if (db.CollectionExists("MDoctors")) db.DropCollection("MDoctors");
-                var doctors = db.GetCollection<Classes.MDoctor>("MDoctors");
-                var result = doctors.Query().OrderBy(x => x.LastName).ToList();
-                checkedListBoxMD.DataSource = result;
-                checkedListBoxMD.DisplayMember = "FullName";
-            }
+        {           
+            
+            var result =  _doctorRepository.GetAll();            
+            checkedListBoxMD.DataSource = result;
+            checkedListBoxMD.DisplayMember = "FullName";
         }
         private void LogError(string msg)
-        {
-            using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
-            {
-                // Get customer collection
-                var col = db.GetCollection<Log>("log");
-
-                Log newLog = new Log();
-                newLog.TextLog = msg;
-                col.Insert(newLog);
-            }
+        {            
+            _logService.LogError(msg);
         }
         private void buttonMD_Click(object sender, EventArgs e)
         {
-            MedicalDoctor medicalDoctor = new MedicalDoctor();
-            medicalDoctor.ShowDialog();
-            LoadMD();
+            using (var medicalDoctor = _formFactory.Create<MedicalDoctor>())
+            {
+                if (medicalDoctor.ShowDialog() == DialogResult.OK)
+                {
+                    LoadMD();
+                }
+            }
         }
         private Customer GetCustomer()
         {
@@ -335,19 +274,19 @@ namespace WindowsFormsApp1
 
         private void ListCustomerCert_Click(object sender, EventArgs e)
         {
-            CustomersForm customersForm = new CustomersForm();
-            customersForm.ShowDialog();
-            var customer = customersForm.CustomerPrint;
-            if (customer != null)
+            using (var customersForm = _formFactory.Create<CustomersForm>())
             {
-                RepeatCustomerPrint(customer);
-            }
-            else
-            {
-                ClearDataBindings();
-            }
-            customersForm.Close();
-            customersForm.Dispose();
+                customersForm.ShowDialog();
+                var customer = customersForm.CustomerPrint;
+                if (customer != null)
+                {
+                    RepeatCustomerPrint(customer);
+                }
+                else
+                {
+                    ClearDataBindings();
+                }
+            }          
         }
         private void RepeatCustomerPrint(Customer customer)
         {
@@ -422,11 +361,15 @@ namespace WindowsFormsApp1
 
         private void Log_Click(object sender, EventArgs e)
         {
-            LogForm logForm = new LogForm();
-            logForm.ShowDialog();
 
-            logForm.Close();
-            logForm.Dispose();
-        }
+            using (var customersForm = _formFactory.Create<LogForm>())
+            {
+                if (customersForm.ShowDialog() == DialogResult.OK)
+                {
+
+
+                }
+            }
+        }                   
     }
 }

@@ -1,4 +1,10 @@
-﻿namespace WindowsFormsApp1.Classes
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WindowsFormsApp1.Models
 {
     public class MDoctor
     {
@@ -8,7 +14,7 @@
         public string LastName { get; set; }
         public string TypeMD { get; set; }
 
-        public string FullName 
+        public string FullName
         {
             get
             {

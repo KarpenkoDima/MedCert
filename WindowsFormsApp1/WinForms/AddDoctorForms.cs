@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Windows.Forms;
 using LiteDB;
-using WindowsFormsApp1.Classes;
+using WindowsFormsApp1.Models;
 
 namespace WindowsFormsApp1.WinForms
 {
@@ -24,7 +24,7 @@ namespace WindowsFormsApp1.WinForms
             using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
             {
                 //if (db.CollectionExists("MDoctors")) db.DropCollection("MDoctors");
-                var doctors = db.GetCollection<Classes.MDoctor>("MDoctors");
+                var doctors = db.GetCollection<MDoctor>("MDoctors");
                 IsEmptyTexBoxes();
                 if (false == GetErrorProvider())
                 {

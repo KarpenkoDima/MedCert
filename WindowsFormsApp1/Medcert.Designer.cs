@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApp1
 {
-    partial class Form1
+    partial class Medcert
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Medcert));
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.textBoxFIO = new System.Windows.Forms.TextBox();
             this.maskedTextBoxDateCheck = new System.Windows.Forms.MaskedTextBox();
