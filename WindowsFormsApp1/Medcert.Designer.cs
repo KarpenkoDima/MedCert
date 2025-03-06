@@ -281,7 +281,8 @@
             this.comboBoxMedExam.FormattingEnabled = true;
             this.comboBoxMedExam.Items.AddRange(new object[] {
             "1",
-            "2"});
+            "2",
+            "3"});
             this.comboBoxMedExam.Location = new System.Drawing.Point(497, 468);
             this.comboBoxMedExam.Name = "comboBoxMedExam";
             this.comboBoxMedExam.Size = new System.Drawing.Size(40, 28);
@@ -294,7 +295,8 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(441, 26);
             this.label11.TabIndex = 219;
-            this.label11.Text = "наявні — 1, відсутні — 2";
+            this.label11.Text = "наявні — 1, відсутні — 2, обстеження комісією лікарів-психіатрів не проводилось —" +
+    " 3";
             // 
             // label12
             // 
@@ -456,7 +458,7 @@
             this.логиToolStripMenuItem.Text = "Логи";
             this.логиToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
             // 
-            // Form1
+            // Medcert
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -468,7 +470,7 @@
             this.Location = new System.Drawing.Point(15, 15);
             this.MaximumSize = new System.Drawing.Size(620, 790);
             this.MinimumSize = new System.Drawing.Size(620, 790);
-            this.Name = "Form1";
+            this.Name = "Medcert";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.groupBoxForm.ResumeLayout(false);

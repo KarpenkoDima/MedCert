@@ -52,10 +52,10 @@
     <ApplicationIcon>MedCert.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A3B39DADB1F41D9179C3ECA9A1B5FC3F4B250139</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>72D0B4B35364C4BCDE106F970038C6EB0E468436</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>WindowsFormsApp1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>MedCert_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -240,6 +240,7 @@
     <EmbeddedResource Include="WinForms\MedicalDoctor.resx">
       <DependentUpon>MedicalDoctor.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="MedCert_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -275,6 +276,11 @@
     <Folder Include="ExternalLibs\" />
     <Folder Include="Resources\TemplatesDocx\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\TemplatesDocx\*.docx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="CreateFolders" BeforeTargets="Build">
     <MakeDir Directories="$(OutputPath)\Data\DB" />
