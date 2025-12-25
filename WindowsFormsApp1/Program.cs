@@ -61,6 +61,9 @@ namespace WindowsFormsApp1
         }
         private static void ConfigureServices(IServiceCollection services)
         {
+            // Unit of Work
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             // Репозитории
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
@@ -68,7 +71,7 @@ namespace WindowsFormsApp1
 
             // Сервисы
             services.AddSingleton<ILogService, LogService>();
-            services.AddSingleton<IPrintService, PrintService>();            
+            services.AddSingleton<IPrintService, PrintService>();
 
             // Фабрика форм
             services.AddSingleton<IFormFactory, FormFactory>();
