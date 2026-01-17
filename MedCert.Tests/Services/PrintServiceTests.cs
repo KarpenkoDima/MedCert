@@ -64,9 +64,9 @@ namespace MedCert.Tests.Services
             );
 
             // Assert - проверяем, что данные корректно нормализованы
-            Assert.AreEqual("01.01.2025", data.CheckDate);
-            Assert.AreEqual("10:00", data.CheckTime);
-            Assert.AreEqual("Иванов Иван Иванович", data.FullName);
+            Assert.That("01.01.2025", Is.EqualTo(data.CheckDate));
+            Assert.That("10:00", Is.EqualTo(data.CheckTime));
+            Assert.That("Иванов Иван Иванович", Is.EqualTo(data.FullName));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace MedCert.Tests.Services
             );
 
             // Assert - должны быть пробелы вместо некорректной даты
-            Assert.AreEqual("          ", data.CheckDate);
+            Assert.That("          ", Is.EqualTo(data.CheckDate));
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace MedCert.Tests.Services
             );
 
             // Assert - должны быть пробелы вместо некорректного времени
-            Assert.AreEqual("     ", data.CheckTime);
+            Assert.That("     ", Is.EqualTo(data.CheckTime));
         }
 
         [Test]

@@ -1,3 +1,4 @@
+using LiteDB;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,6 +15,7 @@ namespace MedCert.Tests.Data
         private Mock<ILogService> _mockLogService;
         private DatabaseOptions _dbOptions;
         private string _testDbPath;
+       // private LiteDatabase _db;
 
         [SetUp]
         public void SetUp()
@@ -22,7 +24,7 @@ namespace MedCert.Tests.Data
 
             // Создаем временную базу данных для тестов
             _testDbPath = Path.Combine(Path.GetTempPath(), $"test_uow_{Guid.NewGuid()}.db");
-
+            //_db = new LiteDatabase(_testDbPath);
             _dbOptions = new DatabaseOptions
             {
                 ConnectionString = $"Filename={_testDbPath}",
@@ -54,14 +56,15 @@ namespace MedCert.Tests.Data
         public void UnitOfWork_Customers_ReturnsRepository()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 var customers = uow.Customers;
 
                 // Assert
-                Assert.IsNotNull(customers);
-                Assert.IsInstanceOf<WindowsFormsApp1.Data.Repositories.ICustomerRepository>(customers);
+                Assert.That(customers, Is.Not.Null);
+                Assert.That(customers, Is.InstanceOf<WindowsFormsApp1.Data.Repositories.ICustomerRepository>());
             }
         }
 
@@ -69,14 +72,15 @@ namespace MedCert.Tests.Data
         public void UnitOfWork_Doctors_ReturnsRepository()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 var doctors = uow.Doctors;
 
                 // Assert
-                Assert.IsNotNull(doctors);
-                Assert.IsInstanceOf<WindowsFormsApp1.Data.Repositories.IDoctorRepository>(doctors);
+                Assert.That(doctors, Is.Not.Null);
+                Assert.That(doctors, Is.InstanceOf<WindowsFormsApp1.Data.Repositories.IDoctorRepository>());
             }
         }
 
@@ -84,14 +88,15 @@ namespace MedCert.Tests.Data
         public void UnitOfWork_Logs_ReturnsRepository()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 var logs = uow.Logs;
 
                 // Assert
-                Assert.IsNotNull(logs);
-                Assert.IsInstanceOf<WindowsFormsApp1.Data.Repositories.ILogRepository>(logs);
+                Assert.That(logs, Is.Not.Null);
+                Assert.That(logs, Is.InstanceOf<WindowsFormsApp1.Data.Repositories.ILogRepository>());
             }
         }
 
@@ -99,7 +104,8 @@ namespace MedCert.Tests.Data
         public void BeginTransaction_StartsTransaction()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 uow.BeginTransaction();
@@ -113,7 +119,8 @@ namespace MedCert.Tests.Data
         public void BeginTransaction_CalledTwice_ThrowsException()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 uow.BeginTransaction();
 
@@ -126,7 +133,8 @@ namespace MedCert.Tests.Data
         public void Commit_WithoutBeginTransaction_ThrowsException()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act & Assert
                 Assert.Throws<InvalidOperationException>(() => uow.Commit());
@@ -137,7 +145,8 @@ namespace MedCert.Tests.Data
         public void Commit_AfterBeginTransaction_Success()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 uow.BeginTransaction();
 
@@ -153,7 +162,8 @@ namespace MedCert.Tests.Data
         public void Rollback_WithoutBeginTransaction_DoesNothing()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act - не должно быть исключения
                 uow.Rollback();
@@ -167,7 +177,8 @@ namespace MedCert.Tests.Data
         public void Rollback_AfterBeginTransaction_Success()
         {
             // Arrange
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 uow.BeginTransaction();
 
@@ -197,8 +208,8 @@ namespace MedCert.Tests.Data
                 R2 = 2,
                 MedDoctors = "Врач"
             };
-
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 uow.BeginTransaction();
@@ -207,11 +218,12 @@ namespace MedCert.Tests.Data
             }
 
             // Assert - проверяем в новой сессии
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 var customers = uow.Customers.GetAll();
-                Assert.AreEqual(1, customers.Count);
-                Assert.AreEqual("Транзакционный Тест", customers[0].FIO);
+                Assert.That(1, Is.EqualTo(customers.Count));
+                Assert.That("Транзакционный Тест", Is.EqualTo(customers[0].FIO));
             }
         }
 
@@ -234,19 +246,22 @@ namespace MedCert.Tests.Data
                 MedDoctors = "Врач"
             };
 
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 // Act
                 uow.BeginTransaction();
                 uow.Customers.Add(customer);
                 uow.Rollback();
             }
-
+            File.Delete(_testDbPath);
             // Assert - проверяем в новой сессии
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 var customers = uow.Customers.GetAll();
-                Assert.AreEqual(0, customers.Count);
+                Assert.That(0, Is.EqualTo(customers.Count));
             }
         }
 
@@ -268,8 +283,8 @@ namespace MedCert.Tests.Data
                 R2 = 2,
                 MedDoctors = "Врач"
             };
-
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 uow.BeginTransaction();
                 uow.Customers.Add(customer);
@@ -277,10 +292,11 @@ namespace MedCert.Tests.Data
             }
 
             // Assert - проверяем в новой сессии
-            using (var uow = new UnitOfWork(_dbOptions, _mockLogService.Object))
+            using (var db = new LiteDatabase(_testDbPath))
+            using (var uow = new UnitOfWork(db, _dbOptions, _mockLogService.Object))
             {
                 var customers = uow.Customers.GetAll();
-                Assert.AreEqual(0, customers.Count);
+                Assert.That(0, Is.EqualTo(customers.Count));
             }
         }
     }

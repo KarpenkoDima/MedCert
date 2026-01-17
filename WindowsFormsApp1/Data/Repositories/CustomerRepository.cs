@@ -10,22 +10,20 @@ namespace WindowsFormsApp1.Data.Repositories
     public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
     {
         public CustomerRepository(
+            ILiteDatabase liteDatabase,
          ILogService logService,
          DatabaseOptions dbOptions)  // Изменили тип инъекции
-         : base("customers", logService, dbOptions)
+         : base(liteDatabase, "customers", logService, dbOptions)
         {
         }
         public override List<Customer> GetAll()
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<Customer>(CollectionName);
-                    return collection.Query()
-                                   .OrderBy(x => x.FIO)
-                                   .ToList();
-                }
+                var collection = _db.GetCollection<Customer>(CollectionName);
+                return collection.Query()
+                               .OrderBy(x => x.FIO)
+                               .ToList();
             }
             catch (Exception ex)
             {
@@ -38,13 +36,10 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<Customer>(CollectionName);
-                    return collection.Find(Query.StartsWith("FIO", searchText))
-                                   .OrderBy(x => x.FIO)
-                                   .ToList();
-                }
+                var collection = _db.GetCollection<Customer>(CollectionName);
+                return collection.Find(Query.StartsWith("FIO", searchText))
+                               .OrderBy(x => x.FIO)
+                               .ToList();
             }
             catch (Exception ex)
             {

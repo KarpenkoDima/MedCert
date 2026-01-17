@@ -10,7 +10,7 @@ namespace WindowsFormsApp1.Data
     /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly LiteDatabase _database;
+        private readonly ILiteDatabase _database;
         private readonly ILogService _logService;
         private readonly DatabaseOptions _dbOptions;
         private bool _disposed;
@@ -20,13 +20,13 @@ namespace WindowsFormsApp1.Data
         private IDoctorRepository _doctors;
         private ILogRepository _logs;
 
-        public UnitOfWork(DatabaseOptions dbOptions, ILogService logService)
+        public UnitOfWork(ILiteDatabase liteDatabase, DatabaseOptions dbOptions, ILogService logService)
         {
             _dbOptions = dbOptions ?? throw new ArgumentNullException(nameof(dbOptions));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
 
             // Создаем подключение к базе данных
-            _database = new LiteDatabase(_dbOptions.ConnectionString);
+            _database = liteDatabase;
         }
 
         public ICustomerRepository Customers
@@ -35,7 +35,7 @@ namespace WindowsFormsApp1.Data
             {
                 if (_customers == null)
                 {
-                    _customers = new CustomerRepository(_logService, _dbOptions);
+                    _customers = new CustomerRepository(_database, _logService, _dbOptions);
                 }
                 return _customers;
             }
@@ -47,7 +47,7 @@ namespace WindowsFormsApp1.Data
             {
                 if (_doctors == null)
                 {
-                    _doctors = new DoctorRepository(_logService, _dbOptions);
+                    _doctors = new DoctorRepository(_database, _logService, _dbOptions);
                 }
                 return _doctors;
             }
@@ -59,7 +59,7 @@ namespace WindowsFormsApp1.Data
             {
                 if (_logs == null)
                 {
-                    _logs = new LogRepository(_logService, _dbOptions);
+                    _logs = new LogRepository(_database, _dbOptions);
                 }
                 return _logs;
             }

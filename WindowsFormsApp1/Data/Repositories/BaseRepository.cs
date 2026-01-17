@@ -15,11 +15,14 @@ namespace WindowsFormsApp1.Data.Repositories
         protected readonly string CollectionName;
         protected readonly DatabaseOptions _dbOptions;
 
+        protected readonly ILiteDatabase _db;
         protected BaseRepository(
+         ILiteDatabase liteDatabase,
          string collectionName,
          ILogService logService,
          DatabaseOptions dbOptions)  // Изменили тип с IOptions<DatabaseOptions>
         {
+            _db = liteDatabase;
             CollectionName = collectionName;
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _dbOptions = dbOptions ?? throw new ArgumentNullException(nameof(dbOptions));
@@ -30,17 +33,14 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
+                var collection = _db.GetCollection<T>(CollectionName);
+
+                if (_dbOptions.EnableLogging)
                 {
-                    var collection = db.GetCollection<T>(CollectionName);
-
-                    if (_dbOptions.EnableLogging)
-                    {
-                        _logService.LogInfo($"Getting all records from {CollectionName}");
-                    }
-
-                    return collection.FindAll().ToList();
+                    _logService.LogInfo($"Getting all records from {CollectionName}");
                 }
+
+                return collection.FindAll().ToList();
             }
             catch (Exception ex)
             {
@@ -53,11 +53,8 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<T>(CollectionName);
-                    collection.Insert(entity);
-                }
+                var collection = _db.GetCollection<T>(CollectionName);
+                collection.Insert(entity);
             }
             catch (Exception ex)
             {
@@ -70,11 +67,8 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<T>(CollectionName);
-                    collection.Delete(id);
-                }
+                    var collection = _db.GetCollection<T>(CollectionName);
+                    collection.Delete(id);                
             }
             catch (Exception ex)
             {
@@ -86,11 +80,8 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<T>(CollectionName);
-                    collection.Update(item);
-                }
+                var collection = _db.GetCollection<T>(CollectionName);
+                collection.Update(item);
             }
             catch (Exception ex)
             {

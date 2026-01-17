@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using LiteDB;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,13 @@ namespace WindowsFormsApp1
         }
         private static void ConfigureServices(IServiceCollection services)
         {
+            // Регистрируем LiteDatabse как Singleton
+            services.AddSingleton<ILiteDatabase>(sp =>
+            {
+                var options = sp.GetRequiredService<DatabaseOptions>();
+                return new LiteDatabase(options.ConnectionString);
+            });
+
             // Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

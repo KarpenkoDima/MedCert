@@ -11,9 +11,10 @@ namespace WindowsFormsApp1.Data.Repositories
     {
         private readonly string _connectionString;
         private const string COLLECTION_NAME = "log";
-
-        public LogRepository(DatabaseOptions dbOptions)
+        private readonly ILiteDatabase _db;
+        public LogRepository(ILiteDatabase liteDatabase, DatabaseOptions dbOptions)
         {
+            _db = liteDatabase;
             _connectionString = dbOptions.ConnectionString;
         }
 
@@ -21,11 +22,8 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(_connectionString))
-                {
-                    var collection = db.GetCollection<LogEntry>(COLLECTION_NAME);
-                    collection.Insert(entry);
-                }
+                var collection = _db.GetCollection<LogEntry>(COLLECTION_NAME);
+                collection.Insert(entry);
             }
             catch (Exception ex)
             {
@@ -37,11 +35,8 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(_connectionString))
-                {
-                    var collection = db.GetCollection<LogEntry>(COLLECTION_NAME);
-                    collection.DeleteAll();
-                }
+                var collection = _db.GetCollection<LogEntry>(COLLECTION_NAME);
+                collection.DeleteAll();
             }
             catch (Exception ex)
             {
@@ -53,18 +48,15 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(_connectionString))
-                {
-                    var collection = db.GetCollection<LogEntry>(COLLECTION_NAME);
-                    return collection.Query()
-                                   .OrderByDescending(x => x.Timestamp)
-                                   .ToList();
-                }
+                var collection = _db.GetCollection<LogEntry>(COLLECTION_NAME);
+                return collection.Query()
+                               .OrderByDescending(x => x.Timestamp)
+                               .ToList();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"\"Произошла ошибка при попытке распечатать сертификат. \n\rВозможно открыт файл с сертификатом\nЛучше перезапустите программу.",
-                    $"Failed to read log: {ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);               
+                    $"Failed to read log: {ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return new List<LogEntry>();
             }
         }
@@ -73,21 +65,18 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(_connectionString))
-                {
-                    var collection = db.GetCollection<LogEntry>(COLLECTION_NAME);
-                    return collection.Query()
-                                   .OrderByDescending(x => x.Timestamp)
-                                   .Limit(count)
-                                   .ToList();
-                }
+                var collection = _db.GetCollection<LogEntry>(COLLECTION_NAME);
+                return collection.Query()
+                               .OrderByDescending(x => x.Timestamp)
+                               .Limit(count)
+                               .ToList();
             }
             catch (Exception ex)
             {
 
                 MessageBox.Show($"\"Произошла ошибка при попытке распечатать сертификат. \n\rВозможно открыт файл с сертификатом\nЛучше перезапустите программу.",
                     $"Failed to read logs: {ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
-               
+
                 return new List<LogEntry>();
             }
         }
@@ -96,15 +85,12 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(_connectionString))
-                {
-                    var collection = db.GetCollection<LogEntry>(COLLECTION_NAME);
-                    collection.Delete(id);
-                }
+                var collection = _db.GetCollection<LogEntry>(COLLECTION_NAME);
+                collection.Delete(id);
             }
             catch (Exception ex)
             {
-               
+
                 MessageBox.Show($"\"Произошла ошибка при попытке распечатать сертификат. \n\rВозможно открыт файл с сертификатом\nЛучше перезапустите программу.",
                     $"Failed to DELETE logs: {ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

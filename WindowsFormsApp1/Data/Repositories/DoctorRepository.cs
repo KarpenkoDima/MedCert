@@ -9,9 +9,10 @@ namespace WindowsFormsApp1.Data.Repositories
     public class DoctorRepository : BaseRepository<MDoctor>, IDoctorRepository
     {
         public DoctorRepository(
+            ILiteDatabase liteDatabase,
             ILogService logService,
             DatabaseOptions dbOptions)  // Изменили тип инъекции
-            : base("MDoctors", logService, dbOptions)
+            : base(liteDatabase, "MDoctors", logService, dbOptions)
         {
         }
 
@@ -19,13 +20,10 @@ namespace WindowsFormsApp1.Data.Repositories
         {
             try
             {
-                using (var db = new LiteDatabase(ConnectionString))
-                {
-                    var collection = db.GetCollection<MDoctor>(CollectionName);
-                    return collection.Query()
-                                   .OrderBy(x => x.LastName)
-                                   .ToList();
-                }
+                var collection = _db.GetCollection<MDoctor>(CollectionName);
+                return collection.Query()
+                               .OrderBy(x => x.LastName)
+                               .ToList();
             }
             catch (Exception ex)
             {

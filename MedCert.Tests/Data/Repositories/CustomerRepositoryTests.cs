@@ -1,3 +1,4 @@
+using LiteDB;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -17,7 +18,7 @@ namespace MedCert.Tests.Data.Repositories
         private DatabaseOptions _dbOptions;
         private CustomerRepository _repository;
         private string _testDbPath;
-
+        private LiteDatabase _db;
         [SetUp]
         public void SetUp()
         {
@@ -25,7 +26,7 @@ namespace MedCert.Tests.Data.Repositories
 
             // Создаем временную базу данных для тестов
             _testDbPath = Path.Combine(Path.GetTempPath(), $"test_db_{Guid.NewGuid()}.db");
-
+            _db = new LiteDatabase(_testDbPath);
             _dbOptions = new DatabaseOptions
             {
                 ConnectionString = $"Filename={_testDbPath}",
@@ -35,7 +36,7 @@ namespace MedCert.Tests.Data.Repositories
                 CacheTimeout = 300
             };
 
-            _repository = new CustomerRepository(_mockLogService.Object, _dbOptions);
+            _repository = new CustomerRepository(_db, _mockLogService.Object, _dbOptions);
         }
 
         [TearDown]
@@ -79,8 +80,8 @@ namespace MedCert.Tests.Data.Repositories
 
             // Assert
             var allCustomers = _repository.GetAll();
-            Assert.AreEqual(1, allCustomers.Count);
-            Assert.AreEqual("Тестовый Тест Тестович", allCustomers[0].FIO);
+            Assert.That(1, Is.EqualTo( allCustomers.Count));
+            Assert.That("Тестовый Тест Тестович", Is.EqualTo( allCustomers[0].FIO));
         }
 
         [Test]
@@ -99,11 +100,11 @@ namespace MedCert.Tests.Data.Repositories
             var result = _repository.GetAll();
 
             // Assert
-            Assert.AreEqual(3, result.Count);
+            Assert.That(3, Is.EqualTo(result.Count));
             // Проверяем, что результаты отсортированы по ФИО
-            Assert.AreEqual("Алексеев А.А.", result[0].FIO);
-            Assert.AreEqual("Борисов Б.Б.", result[1].FIO);
-            Assert.AreEqual("Васильев В.В.", result[2].FIO);
+            Assert.That("Алексеев А.А.", Is.EqualTo(result[0].FIO));
+            Assert.That("Борисов Б.Б.", Is.EqualTo(result[1].FIO));
+            Assert.That("Васильев В.В.", Is.EqualTo(result[2].FIO));
         }
 
         [Test]
@@ -122,9 +123,9 @@ namespace MedCert.Tests.Data.Repositories
             var result = _repository.Search("Иван");
 
             // Assert
-            Assert.AreEqual(2, result.Count);
-            Assert.IsTrue(result.Any(c => c.FIO == "Иванов Иван Иванович"));
-            Assert.IsTrue(result.Any(c => c.FIO == "Иванова Мария Петровна"));
+            Assert.That(2, Is.EqualTo(result.Count));
+            Assert.That(result.Any(c => c.FIO == "Иванов Иван Иванович"));
+            Assert.That(result.Any(c => c.FIO == "Иванова Мария Петровна"));
         }
 
         [Test]
@@ -142,7 +143,7 @@ namespace MedCert.Tests.Data.Repositories
 
             // Assert
             var remainingCustomers = _repository.GetAll();
-            Assert.AreEqual(0, remainingCustomers.Count);
+            Assert.That(0, Is.EqualTo(remainingCustomers.Count));
         }
 
         [Test]
@@ -161,8 +162,8 @@ namespace MedCert.Tests.Data.Repositories
 
             // Assert
             var updatedCustomers = _repository.GetAll();
-            Assert.AreEqual(1, updatedCustomers.Count);
-            Assert.AreEqual("Новое Имя", updatedCustomers[0].FIO);
+            Assert.That(1, Is.EqualTo(updatedCustomers.Count));
+            Assert.That("Новое Имя", Is.EqualTo(updatedCustomers[0].FIO));
         }
 
         private Customer CreateTestCustomer(string fio)
