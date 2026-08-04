@@ -80,10 +80,35 @@ namespace WindowsFormsApp1
                 return;
             }
 
+            if (!ConfirmSuccessfulPrint())
+            {
+                _logService.LogWarning(
+                    "Сертификат сформирован, но оператор не подтвердил успешную печать");
+                return;
+            }
+
             if (!isRepeatPrint)
             {
                 SaveCustomer(customer);
             }
+            else
+            {
+                _logService.LogInfo("Оператор подтвердил повторную печать сертификата");
+            }
+        }
+
+        private bool ConfirmSuccessfulPrint()
+        {
+            return MessageBox.Show(
+                "Документ открыт в Word.\n\n" +
+                "1. Проверьте заполнение сертификата.\n" +
+                "2. Выполните печать на бланк.\n" +
+                "3. После успешной печати вернитесь в программу и нажмите «Да».\n\n" +
+                "Сертификат успешно распечатан?",
+                "Подтверждение печати",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
         }
 
         private bool PrintCertificate(Customer customer)
