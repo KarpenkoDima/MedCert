@@ -23,22 +23,16 @@ namespace WindowsFormsApp1
 
         BindingSource binding = new BindingSource();
 
-
         private readonly IFormFactory _formFactory;
+        private readonly ICertificateIssuanceService _certificateIssuanceService;
+        private readonly IDoctorRepository _doctorRepository;
 
-       private readonly IPrintService _printService;
-        private readonly ILogService _logService;
-        ICustomerRepository _customerRepository;
-        IDoctorRepository _doctorRepository;
-        public Medcert(IPrintService printService,
-        ILogService logService,
-        ICustomerRepository customerRepository,
-        IDoctorRepository doctorRepository,
-        IFormFactory formFactory)
+        public Medcert(
+            ICertificateIssuanceService certificateIssuanceService,
+            IDoctorRepository doctorRepository,
+            IFormFactory formFactory)
         {
-            _printService = printService;
-            _logService = logService;
-            _customerRepository = customerRepository;
+            _certificateIssuanceService = certificateIssuanceService;
             _doctorRepository = doctorRepository;
             _formFactory = formFactory;
 
@@ -75,68 +69,19 @@ namespace WindowsFormsApp1
             }
 
             var isRepeatPrint = textBoxFIO.DataBindings.Count > 0;
-            if (!PrintCertificate(customer))
+            var result = _certificateIssuanceService.Issue(customer, isRepeatPrint);
+            if (!string.IsNullOrWhiteSpace(result.Error))
             {
-                return;
-            }
+                var title = result.Status == CertificateIssuanceStatus.StorageFailed
+                    ? "Ошибка сохранения"
+                    : "Ошибка при печати сертификата";
 
-            if (!ConfirmSuccessfulPrint())
-            {
-                _logService.LogWarning(
-                    "Сертификат сформирован, но оператор не подтвердил успешную печать");
-                return;
-            }
-
-            if (!isRepeatPrint)
-            {
-                SaveCustomer(customer);
-            }
-            else
-            {
-                _logService.LogInfo("Оператор подтвердил повторную печать сертификата");
-            }
-        }
-
-        private bool ConfirmSuccessfulPrint()
-        {
-            return MessageBox.Show(
-                "Документ открыт в Word.\n\n" +
-                "1. Проверьте заполнение сертификата.\n" +
-                "2. Выполните печать на бланк.\n" +
-                "3. После успешной печати вернитесь в программу и нажмите «Да».\n\n" +
-                "Сертификат успешно распечатан?",
-                "Подтверждение печати",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
-        }
-
-        private bool PrintCertificate(Customer customer)
-        {
-            var data = new PrintCertificateData(
-                customer.MedDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
-                customer.Time.ToString("HH:mm", CultureInfo.InvariantCulture),
-                customer.FIO,
-                customer.BoD.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
-                customer.Sex.ToString(CultureInfo.InvariantCulture),
-                customer.Registration,
-                customer.MedCheck,
-                customer.R1.ToString(CultureInfo.InvariantCulture),
-                customer.MedAnalisys,
-                customer.R2.ToString(CultureInfo.InvariantCulture),
-                customer.MedDoctors
-            );
-          
-            if (!_printService.PrintCertificate(data, out string error))
-            {
-                MessageBox.Show(error,
-                    "Ошибка при печати сертификата",
+                MessageBox.Show(
+                    result.Error,
+                    title,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                return false;
             }
-
-            return true;
         }
     
         private string GetMedDoctorsInString()
@@ -156,24 +101,6 @@ namespace WindowsFormsApp1
             if (checkedListBoxMD.CheckedIndices.Count > 0) medicalDoctors += (checkedListBoxMD.CheckedItems[i] as MDoctor)?.FullName;
 
             return medicalDoctors;
-        }
-        private bool SaveCustomer(Customer customer)
-        {
-            try
-            {
-                _customerRepository.Add(customer);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logService.LogError("Сертификат сформирован, но запись не сохранена", ex);
-                MessageBox.Show(
-                    "Сертификат открыт в Word, но запись о нём не удалось сохранить в базе данных.",
-                    "Ошибка сохранения",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return false;
-            }
         }
         private void LoadMD()
         {           

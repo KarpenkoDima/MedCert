@@ -80,6 +80,8 @@ namespace WindowsFormsApp1
             // Сервисы
             services.AddSingleton<ILogService, LogService>();
             services.AddSingleton<IPrintService, PrintService>();
+            services.AddSingleton<IPrintConfirmationService, PrintConfirmationService>();
+            services.AddScoped<ICertificateIssuanceService, CertificateIssuanceService>();
 
             // Фабрика форм
             services.AddSingleton<IFormFactory, FormFactory>();
