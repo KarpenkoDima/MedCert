@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Globalization;
 using System.Windows.Forms;
-using LiteDB;
 using WindowsFormsApp1.WinForms;
 using System.Linq;
 using WindowsFormsApp1.Services;
@@ -12,6 +11,16 @@ namespace WindowsFormsApp1
 {
     public partial class Medcert : Form
     {
+        private static readonly string[] SupportedDateFormats =
+        {
+            "dd.MM.yyyy",
+            "dd/MM/yyyy",
+            "dd-MM-yyyy",
+            "dd MM yyyy"
+        };
+
+        private const string SupportedTimeFormat = @"hh\:mm";
+
         BindingSource binding = new BindingSource();
 
 
@@ -49,29 +58,48 @@ namespace WindowsFormsApp1
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            CheckForEerror();
-            if (false == GetErrorProvider())
+            ValidateForm();
+            if (HasValidationErrors())
             {
-                PrintCertificate();
-                #region /* ------------ Сохранение клиента в БД ---------- */
-                SaveCustomer();
-                #endregion /* ------------------------------------ */
-            }           
+                return;
+            }
+
+            if (!TryCreateCustomer(out var customer))
+            {
+                MessageBox.Show(
+                    "Не удалось обработать дату или время. Проверьте введённые значения.",
+                    "Некорректные данные",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            var isRepeatPrint = textBoxFIO.DataBindings.Count > 0;
+            if (!PrintCertificate(customer))
+            {
+                return;
+            }
+
+            if (!isRepeatPrint)
+            {
+                SaveCustomer(customer);
+            }
         }
-        private void PrintCertificate()
+
+        private bool PrintCertificate(Customer customer)
         {
             var data = new PrintCertificateData(
-                maskedTextBoxDateCheck.Text,
-                maskedTextBoxTimeCheck.Text,
-                textBoxFIO.Text,
-                maskedTextBoxBoD.Text,
-                comboBoxSex.SelectedItem?.ToString() ?? "",
-                textBoxAddress.Text,
-                textBoxResultMedCheck.Text,
-                comboBoxResultMedCheck.SelectedItem?.ToString() ?? "",
-                textBoxMedExam.Text,
-                comboBoxMedExam.SelectedItem?.ToString() ?? "",
-                GetMedDoctorsInString()
+                customer.MedDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+                customer.Time.ToString("HH:mm", CultureInfo.InvariantCulture),
+                customer.FIO,
+                customer.BoD.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+                customer.Sex.ToString(CultureInfo.InvariantCulture),
+                customer.Registration,
+                customer.MedCheck,
+                customer.R1.ToString(CultureInfo.InvariantCulture),
+                customer.MedAnalisys,
+                customer.R2.ToString(CultureInfo.InvariantCulture),
+                customer.MedDoctors
             );
           
             if (!_printService.PrintCertificate(data, out string error))
@@ -80,8 +108,10 @@ namespace WindowsFormsApp1
                     "Ошибка при печати сертификата",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                _logService.LogError(error);
+                return false;
             }
+
+            return true;
         }
     
         private string GetMedDoctorsInString()
@@ -102,23 +132,23 @@ namespace WindowsFormsApp1
 
             return medicalDoctors;
         }
-        private void SaveCustomer()
+        private bool SaveCustomer(Customer customer)
         {
-            ClearDataBindings();
-            if (textBoxFIO.DataBindings.Count <= 0)
+            try
             {
-                try
-                {
-                   
-                    _customerRepository.Add(GetCustomer());
-                    ClearDataBindings();
-
-                }
-                catch (Exception ex)
-                {
-                    LogError(ex.Message);
-                }
-            }           
+                _customerRepository.Add(customer);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logService.LogError("Сертификат сформирован, но запись не сохранена", ex);
+                MessageBox.Show(
+                    "Сертификат открыт в Word, но запись о нём не удалось сохранить в базе данных.",
+                    "Ошибка сохранения",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
+            }
         }
         private void LoadMD()
         {           
@@ -126,10 +156,6 @@ namespace WindowsFormsApp1
             var result =  _doctorRepository.GetAll();            
             checkedListBoxMD.DataSource = result;
             checkedListBoxMD.DisplayMember = "FullName";
-        }
-        private void LogError(string msg)
-        {            
-            _logService.LogError(msg);
         }
         private void buttonMD_Click(object sender, EventArgs e)
         {
@@ -141,15 +167,28 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        private Customer GetCustomer()
+        private bool TryCreateCustomer(out Customer customer)
         {
-            var customer = new Customer
+            customer = null;
+
+            if (!TryParseDate(maskedTextBoxBoD.Text, out var birthDate) ||
+                !TryParseDate(maskedTextBoxDateCheck.Text, out var medicalDate) ||
+                !TimeSpan.TryParseExact(
+                    maskedTextBoxTimeCheck.Text,
+                    SupportedTimeFormat,
+                    CultureInfo.InvariantCulture,
+                    out var medicalTime))
             {
-                FIO = textBoxFIO.Text,
-                BoD = DateTime.Parse(string.Join(".", maskedTextBoxBoD.Text)),
-                MedDate = DateTime.Parse(string.Join(".", maskedTextBoxDateCheck.Text)),
-                Time = DateTime.Parse(string.Join(":", maskedTextBoxTimeCheck.Text)),
-                Registration = textBoxAddress.Text,
+                return false;
+            }
+
+            customer = new Customer
+            {
+                FIO = textBoxFIO.Text.Trim(),
+                BoD = birthDate,
+                MedDate = medicalDate,
+                Time = medicalDate.Date.Add(medicalTime),
+                Registration = textBoxAddress.Text.Trim(),
                 MedCheck = textBoxResultMedCheck.Text,
                 MedAnalisys = textBoxMedExam.Text,
                 R1 = comboBoxResultMedCheck.SelectedIndex + 1,
@@ -157,9 +196,21 @@ namespace WindowsFormsApp1
                 Sex = comboBoxSex.SelectedIndex == -1 ? 3 : comboBoxSex.SelectedIndex + 1,
                 MedDoctors = GetMedDoctorsInString()
             };
-            return customer;
+
+            return true;
         }
-        private bool GetErrorProvider()
+
+        private static bool TryParseDate(string value, out DateTime date)
+        {
+            return DateTime.TryParseExact(
+                value,
+                SupportedDateFormats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date);
+        }
+
+        private bool HasValidationErrors()
         {
             foreach (Control control in groupBoxForm.Controls)
             {
@@ -168,35 +219,41 @@ namespace WindowsFormsApp1
             return false;
         }
 
-        private void CheckForEerror()
+        private void ValidateForm()
         {
-            Regex regex = new Regex(@"^(0[1-9]|[12][0-9]|3[01])[.|\s|-|/](0[1-9]|1[012])[.|\s|-|для проверки коректности дат](19|20)\d\d$");
-            if (false == regex.Match(this.maskedTextBoxDateCheck.Text).Success)
-            {
-                errorProvider1.SetError(this.maskedTextBoxDateCheck, "Неверная дата");
-            }
-            else
-            {
-                errorProvider1.SetError(this.maskedTextBoxDateCheck, string.Empty);
-            }
+            errorProvider1.SetError(
+                maskedTextBoxDateCheck,
+                TryParseDate(maskedTextBoxDateCheck.Text, out _)
+                    ? string.Empty
+                    : "Укажите корректную дату осмотра");
 
-            if (false == regex.Match(this.maskedTextBoxBoD.Text).Success)
-            {
-                errorProvider1.SetError(this.maskedTextBoxBoD, "Неверная дата");
-            }
-            else
-            {
-                errorProvider1.SetError(this.maskedTextBoxBoD, string.Empty);
-            }
-            regex = new Regex(@"^([0-5]?\d):([0-5]?\d)$");
-            if (false == regex.Match(this.maskedTextBoxTimeCheck.Text).Success)
-            {
-                errorProvider1.SetError(this.maskedTextBoxTimeCheck, "Неверено указано время");
-            }
-            else
-            {
-                errorProvider1.SetError(this.maskedTextBoxTimeCheck, string.Empty);
-            }
+            errorProvider1.SetError(
+                maskedTextBoxBoD,
+                TryParseDate(maskedTextBoxBoD.Text, out _)
+                    ? string.Empty
+                    : "Укажите корректную дату рождения");
+
+            errorProvider1.SetError(
+                maskedTextBoxTimeCheck,
+                TimeSpan.TryParseExact(
+                    maskedTextBoxTimeCheck.Text,
+                    SupportedTimeFormat,
+                    CultureInfo.InvariantCulture,
+                    out _)
+                    ? string.Empty
+                    : "Укажите корректное время от 00:00 до 23:59");
+
+            errorProvider1.SetError(
+                textBoxFIO,
+                string.IsNullOrWhiteSpace(textBoxFIO.Text)
+                    ? "Укажите Ф.И.О."
+                    : string.Empty);
+
+            errorProvider1.SetError(
+                textBoxAddress,
+                string.IsNullOrWhiteSpace(textBoxAddress.Text)
+                    ? "Укажите место проживания"
+                    : string.Empty);
 
             if (textBoxMDFIO.Text.Length <= 0 && checkedListBoxMD.CheckedItems.Count <= 0)
             {
