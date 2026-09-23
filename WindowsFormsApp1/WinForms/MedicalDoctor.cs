@@ -23,14 +23,17 @@ namespace WindowsFormsApp1.WinForms
              LoadDB();
          }*/
         private readonly IDoctorRepository _doctorRepository;
+        private readonly IFormFactory _formFactory;
 
         public MedicalDoctor(
             IDoctorRepository doctorRepository,
             ILogService logService,
-            IPrintService printService)
+            IPrintService printService,
+            IFormFactory formFactory)
             : base(logService, printService)
         {
             _doctorRepository = doctorRepository;
+            _formFactory = formFactory;
             InitializeComponent();
             LoadDB();
         }
@@ -104,8 +107,10 @@ namespace WindowsFormsApp1.WinForms
         }
         private void создатьToolStripButton_Click(object sender, EventArgs e)
         {
-            AddDoctorForms addDoctorForms = new AddDoctorForms();
-            addDoctorForms.ShowDialog();
+            using (var addDoctorForms = _formFactory.Create<AddDoctorForms>())
+            {
+                addDoctorForms.ShowDialog();
+            }
             LoadDB();
         }
     }

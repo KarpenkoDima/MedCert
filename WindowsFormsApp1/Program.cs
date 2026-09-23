@@ -91,6 +91,8 @@ namespace WindowsFormsApp1
             services.AddTransient<CustomersForm>();
             services.AddTransient<MedicalDoctor>();
             services.AddTransient<LogForm>();
+            // fix:add-doctor-form-di
+            services.AddTransient<AddDoctorForms>();
         }
     }
 }

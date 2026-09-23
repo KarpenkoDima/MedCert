@@ -28,6 +28,9 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>MedCert.snk</AssemblyOriginatorKeyFile>
+    <PublicSign>true</PublicSign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,10 +55,10 @@
     <ApplicationIcon>MedCert.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>9ADC6073582CB839D66738D5AB0A7694A18A0311</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>4250AE770B9BF23240C5FD99D36F62483BA05C07</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>MedCert_2_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>MedCert_4_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -244,8 +247,11 @@
     <EmbeddedResource Include="WinForms\MedicalDoctor.resx">
       <DependentUpon>MedicalDoctor.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="MedCert.snk" />
     <None Include="MedCert_1_TemporaryKey.pfx" />
     <None Include="MedCert_2_TemporaryKey.pfx" />
+    <None Include="MedCert_3_TemporaryKey.pfx" />
+    <None Include="MedCert_4_TemporaryKey.pfx" />
     <None Include="MedCert_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

@@ -2,14 +2,19 @@
 using System.Configuration;
 using System.Windows.Forms;
 using LiteDB;
+using WindowsFormsApp1.Data.Repositories;
 using WindowsFormsApp1.Models;
 
 namespace WindowsFormsApp1.WinForms
 {
     public partial class AddDoctorForms : Form
     {
-        public AddDoctorForms()
+        // fix/add-doctor-form-di
+        private readonly IDoctorRepository _doctorRepository;
+        
+        public AddDoctorForms(IDoctorRepository doctorRepository)
         {
+            _doctorRepository = doctorRepository ?? throw new ArgumentNullException(nameof(doctorRepository));
             InitializeComponent();
         }
 
@@ -19,25 +24,28 @@ namespace WindowsFormsApp1.WinForms
             this.Close();
             this.Dispose();
         }
+
         private void SaveMD()
         {
-            using (var db = new LiteDatabase(ConfigurationManager.ConnectionStrings["LiteDB"].ConnectionString))
+            IsEmptyTexBoxes();
+            if (false == GetErrorProvider())
             {
-                //if (db.CollectionExists("MDoctors")) db.DropCollection("MDoctors");
-                var doctors = db.GetCollection<MDoctor>("MDoctors");
-                IsEmptyTexBoxes();
-                if (false == GetErrorProvider())
+                var doctor = new MDoctor()
                 {
-                    var doctor = new MDoctor()
-                    {
-                        FirstName = textBoxFirstName.Text,
-                        LastName = textBoxLastName.Text,
-                        MiddleName = textBoxMiddleName.Text,
-                        TypeMD = textBoxPosition.Text
-                    };
-                    doctors.Insert(doctor);
+                    FirstName = textBoxFirstName.Text,
+                    LastName = textBoxLastName.Text,
+                    MiddleName = textBoxMiddleName.Text,
+                    TypeMD = textBoxPosition.Text
+                };
+                try
+                {
+                    _doctorRepository.Add(doctor);
                 }
-                
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Не удалось сохранить врача.", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
