@@ -170,6 +170,8 @@
   <ItemGroup>
     <Compile Include="Data\DatabaseOptions.cs" />
     <Compile Include="Data\IUnitOfWork.cs" />
+    <Compile Include="Data\Repositories\ITextTemplateRepository.cs" />
+    <Compile Include="Data\Repositories\TextTemplateRepository.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
     <Compile Include="Data\Repositories\BaseRepository.cs" />
     <Compile Include="Data\Repositories\CustomerRepository.cs" />
@@ -189,6 +191,7 @@
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\MDoctor.cs" />
     <Compile Include="Models\PrintCertificateData.cs" />
+    <Compile Include="Models\TextTemplate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CertificateIssuanceService.cs" />

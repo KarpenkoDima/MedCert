@@ -76,6 +76,7 @@ namespace WindowsFormsApp1
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<ITextTemplateRepository, TextTemplateRepository>();
 
             // Сервисы
             services.AddSingleton<ILogService, LogService>();
