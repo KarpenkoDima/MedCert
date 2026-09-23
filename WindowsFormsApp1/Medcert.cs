@@ -83,7 +83,7 @@ namespace WindowsFormsApp1
                     MessageBoxIcon.Error);
             }
         }
-    
+
         private string GetMedDoctorsInString()
         {
             string medicalDoctors = String.Empty;
@@ -103,9 +103,9 @@ namespace WindowsFormsApp1
             return medicalDoctors;
         }
         private void LoadMD()
-        {           
-            
-            var result =  _doctorRepository.GetAll();            
+        {
+
+            var result = _doctorRepository.GetAll();
             checkedListBoxMD.DataSource = result;
             checkedListBoxMD.DisplayMember = "FullName";
         }
@@ -295,7 +295,7 @@ namespace WindowsFormsApp1
                 {
                     ClearDataBindings();
                 }
-            }          
+            }
         }
         private void RepeatCustomerPrint(Customer customer)
         {
@@ -321,17 +321,17 @@ namespace WindowsFormsApp1
             comboBoxMedExam.DataBindings.Add("Text", customer, "R2");
 
             comboBoxSex.DataBindings.Add("Text", customer, "Sex");
-            
+
 
 
             string medicalDoctors;
-            var doctors = customer.MedDoctors.Split(',').ToList();           
+            var doctors = customer.MedDoctors.Split(',').ToList();
             for (int j = 0; j < doctors.Count; j++)
             {
                 for (int i = 0; i <= checkedListBoxMD.Items.Count - 1; i++)
                 {
                     medicalDoctors = (checkedListBoxMD.Items[i] as MDoctor)?.FullName;
-                    
+
                     if (medicalDoctors.Trim().Contains(doctors[j].Trim()))
                     {
                         checkedListBoxMD.SetItemChecked(i, true);
@@ -348,8 +348,8 @@ namespace WindowsFormsApp1
                 {
                     customer.MedDoctors += item;
                 }
-                    textBoxMDFIO.DataBindings.Add("Text", customer, "MedDoctors");
-                
+                textBoxMDFIO.DataBindings.Add("Text", customer, "MedDoctors");
+
             }
         }
 
@@ -379,6 +379,18 @@ namespace WindowsFormsApp1
 
                 }
             }
-        }                   
+        }
+
+        private void TextTemplates_Click(object sender, EventArgs e)
+        {
+            using (var textTemplatesForm = _formFactory.Create<TextTemplateForm>())
+            {
+                textTemplatesForm.ShowDialog();
+            }
+            LoadTemplatesIntoComboBox(); // метод из этапа 4 — перечитать список после правок
+        }
+
+        private void LoadTemplatesIntoComboBox()
+        { }
     }
 }

@@ -226,6 +226,12 @@
     <Compile Include="WinForms\MedicalDoctor.Designer.cs">
       <DependentUpon>MedicalDoctor.cs</DependentUpon>
     </Compile>
+    <Compile Include="WinForms\TextTemplateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\TextTemplateForm.Designer.cs">
+      <DependentUpon>TextTemplateForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Medcert.resx">
       <DependentUpon>Medcert.cs</DependentUpon>
     </EmbeddedResource>

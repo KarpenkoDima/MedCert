@@ -67,6 +67,10 @@
             this.ListCustomerCert = new System.Windows.Forms.ToolStripMenuItem();
             this.логToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.логиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+
+            this.справочникиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.шаблоныТекстаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.groupBoxForm.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -435,6 +439,11 @@
             this.списокToolStripMenuItem.Name = "списокToolStripMenuItem";
             this.списокToolStripMenuItem.Size = new System.Drawing.Size(192, 20);
             this.списокToolStripMenuItem.Text = "Список выданых сертификатов";
+
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+this.списокToolStripMenuItem,
+this.логToolStripMenuItem,
+this.справочникиToolStripMenuItem});
             // 
             // ListCustomerCert
             // 
@@ -450,6 +459,13 @@
             this.логToolStripMenuItem.Name = "логToolStripMenuItem";
             this.логToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.логToolStripMenuItem.Text = "Лог";
+
+            this.справочникиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.шаблоныТекстаToolStripMenuItem});
+            this.справочникиToolStripMenuItem.Text = "Справочники";
+            this.шаблоныТекстаToolStripMenuItem.Text = "Шаблоны заключений";
+            this.шаблоныТекстаToolStripMenuItem.Click += new System.EventHandler(this.TextTemplates_Click);
+
             // 
             // логиToolStripMenuItem
             // 
@@ -540,5 +556,8 @@
         private System.Windows.Forms.ToolStripMenuItem ListCustomerCert;
         private System.Windows.Forms.ToolStripMenuItem логToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem логиToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem справочникиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem шаблоныТекстаToolStripMenuItem;
     }
 }
