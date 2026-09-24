@@ -26,16 +26,17 @@ namespace WindowsFormsApp1
         private readonly IFormFactory _formFactory;
         private readonly ICertificateIssuanceService _certificateIssuanceService;
         private readonly IDoctorRepository _doctorRepository;
-
+        private readonly ITextTemplateRepository _textTemplateRepository;
         public Medcert(
             ICertificateIssuanceService certificateIssuanceService,
             IDoctorRepository doctorRepository,
-            IFormFactory formFactory)
+            IFormFactory formFactory,
+            ITextTemplateRepository textTemplateRepository)
         {
             _certificateIssuanceService = certificateIssuanceService;
             _doctorRepository = doctorRepository;
             _formFactory = formFactory;
-
+            _textTemplateRepository = textTemplateRepository;
             InitializeComponent();
 
             int maxWidth = 0, temp = 0;
@@ -49,6 +50,7 @@ namespace WindowsFormsApp1
             }
             comboBoxSex.DropDownWidth = maxWidth;
             LoadMD();
+            LoadTemplatesIntoComboBox();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -243,8 +245,6 @@ namespace WindowsFormsApp1
             }
         }
 
-
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.SelectedIndex != -1)
@@ -391,6 +391,16 @@ namespace WindowsFormsApp1
         }
 
         private void LoadTemplatesIntoComboBox()
-        { }
+        {
+            comboBox1.DataSource = null;
+            comboBox1.Items.Clear();
+            var templates = _textTemplateRepository
+                .GetAll()
+                .Where(t => t.Category == TextTemplate.CategoryMedCheck)
+                .Select(t => t.Text)
+                .ToArray();
+
+            comboBox1.Items.AddRange(templates);
+        }
     }
 }

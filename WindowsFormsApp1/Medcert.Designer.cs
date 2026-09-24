@@ -67,10 +67,8 @@
             this.ListCustomerCert = new System.Windows.Forms.ToolStripMenuItem();
             this.логToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.логиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-
             this.справочникиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.шаблоныТекстаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.groupBoxForm.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -399,12 +397,8 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Діяльності працівника залізничного тр-ту",
-            "Діяльності водія кат.",
-            "Військової служби у ЗСУ з доступом до державної таємниці",
-            "Зберігання, носіння та використання вогнепальної зброї"});
             this.comboBox1.Location = new System.Drawing.Point(411, 327);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(154, 28);
@@ -425,9 +419,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.списокToolStripMenuItem,
-            this.логToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
+            this.логToolStripMenuItem,
+            this.справочникиToolStripMenuItem});
             this.menuStrip1.Size = new System.Drawing.Size(604, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
@@ -439,11 +432,6 @@
             this.списокToolStripMenuItem.Name = "списокToolStripMenuItem";
             this.списокToolStripMenuItem.Size = new System.Drawing.Size(192, 20);
             this.списокToolStripMenuItem.Text = "Список выданых сертификатов";
-
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-this.списокToolStripMenuItem,
-this.логToolStripMenuItem,
-this.справочникиToolStripMenuItem});
             // 
             // ListCustomerCert
             // 
@@ -459,13 +447,6 @@ this.справочникиToolStripMenuItem});
             this.логToolStripMenuItem.Name = "логToolStripMenuItem";
             this.логToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.логToolStripMenuItem.Text = "Лог";
-
-            this.справочникиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.шаблоныТекстаToolStripMenuItem});
-            this.справочникиToolStripMenuItem.Text = "Справочники";
-            this.шаблоныТекстаToolStripMenuItem.Text = "Шаблоны заключений";
-            this.шаблоныТекстаToolStripMenuItem.Click += new System.EventHandler(this.TextTemplates_Click);
-
             // 
             // логиToolStripMenuItem
             // 
@@ -473,6 +454,21 @@ this.справочникиToolStripMenuItem});
             this.логиToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
             this.логиToolStripMenuItem.Text = "Логи";
             this.логиToolStripMenuItem.Click += new System.EventHandler(this.Log_Click);
+            // 
+            // справочникиToolStripMenuItem
+            // 
+            this.справочникиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.шаблоныТекстаToolStripMenuItem});
+            this.справочникиToolStripMenuItem.Name = "справочникиToolStripMenuItem";
+            this.справочникиToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
+            this.справочникиToolStripMenuItem.Text = "Справочники";
+            // 
+            // шаблоныТекстаToolStripMenuItem
+            // 
+            this.шаблоныТекстаToolStripMenuItem.Name = "шаблоныТекстаToolStripMenuItem";
+            this.шаблоныТекстаToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.шаблоныТекстаToolStripMenuItem.Text = "Шаблоны заключений";
+            this.шаблоныТекстаToolStripMenuItem.Click += new System.EventHandler(this.TextTemplates_Click);
             // 
             // Medcert
             // 

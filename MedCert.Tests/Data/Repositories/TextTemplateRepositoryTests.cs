@@ -34,7 +34,7 @@ namespace MedCert.Tests.Data.Repositories
                 CacheTimeout = 300
             };
 
-            _repository = new TextTemplateRepository(_db, "TextTemplate", _mockLogService.Object, _dbOptions);
+            _repository = new TextTemplateRepository(_db, _mockLogService.Object, _dbOptions);
         }
 
         [TearDown]

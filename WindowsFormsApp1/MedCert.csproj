@@ -198,6 +198,12 @@
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\PrintConfirmationService.cs" />
     <Compile Include="Services\PrintService.cs" />
+    <Compile Include="WinForms\AddTextTemplateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\AddTextTemplateForm.Designer.cs">
+      <DependentUpon>AddTextTemplateForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WinForms\AddDoctorForms.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -244,6 +250,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="WinForms\AddTextTemplateForm.resx">
+      <DependentUpon>AddTextTemplateForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WinForms\AddDoctorForms.resx">
       <DependentUpon>AddDoctorForms.cs</DependentUpon>
     </EmbeddedResource>

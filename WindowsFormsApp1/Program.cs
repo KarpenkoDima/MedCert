@@ -95,6 +95,8 @@ namespace WindowsFormsApp1
             services.AddTransient<TextTemplateForm>();
             // fix:add-doctor-form-di
             services.AddTransient<AddDoctorForms>();
+            // feat:add text category
+            services.AddTransient<AddTextTemplateForm>();
         }
     }
 }

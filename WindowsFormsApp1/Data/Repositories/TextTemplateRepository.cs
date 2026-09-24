@@ -9,11 +9,10 @@ namespace WindowsFormsApp1.Data.Repositories
     public class TextTemplateRepository : BaseRepository<TextTemplate>, ITextTemplateRepository
     {
         public TextTemplateRepository(
-            ILiteDatabase liteDatabase, 
-            string collectionName, 
+            ILiteDatabase liteDatabase,             
             ILogService logService, 
             DatabaseOptions dbOptions) 
-            : base(liteDatabase, collectionName, logService, dbOptions)
+            : base(liteDatabase, "TextTemplate", logService, dbOptions)
         { }
 
         public override List<TextTemplate> GetAll()
@@ -25,7 +24,7 @@ namespace WindowsFormsApp1.Data.Repositories
             }
             catch (Exception ex)
             {
-                _logService.LogError("Error getting all texst templates", ex);
+                _logService.LogError("Error getting all text templates", ex);
                 throw;
             }
         }
